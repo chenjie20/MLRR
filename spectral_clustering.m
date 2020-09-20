@@ -6,5 +6,5 @@ W = D * W * D;
 V = U(:, 1 : k);
 V = normr(V);
 
-ids = kmeans(V, k);
+ids = kmeans(V, k, 'emptyaction', 'singleton', 'replicates', 100, 'display', 'off');
 end
