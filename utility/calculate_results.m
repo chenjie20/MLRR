@@ -11,12 +11,15 @@ function [nmi, purity, fmeasure, ri, ari] = calculate_results(num_class_labels, 
     n = 0;
     for idx = 1 : num_cluster
         data = cluster_data(idx);
-        [rows, cols] = size(data{1});
-        if rows > cols
-            n = n + rows;
+        if size(data{1}, 2) == 1
+            if size(data{1}, 1) == 1
+                n = n + 1;
+            else
+                error('the size of data should be 1 * N.');
+            end
         else
-            n = n + cols;
-        end   
+            n = n + size(data{1}, 2);
+        end       
     end   
     if n_1 ~= n
         error('error: the numbers of sampes are not coincide.');
@@ -67,24 +70,24 @@ function [nmi, purity, fmeasure, ri, ari] = calculate_results(num_class_labels, 
         end 
         fmeasure = fmeasure + num_class_labels(i) / n * fm;
     end
-    
+        
     % purity
-    total_purity = 0;
-    for i =  1 : num_cluster       
-        fm = 0;
-        current_purity = 0;
-        current_cluster = cluster_data(i);
+    total_samples = 0;  
+    max_num_samples = 0;
+    for i =  1 : num_cluster
+        current_cluster = cluster_data(i);            
         num = size(current_cluster{1}, 2);
+        total_samples = total_samples + num;
+        current_max_num_samples = 0;
         for j = 1 : num_class          
             len = length(find(current_cluster{1}(1, :) == j));
-            precsion = len / num;
-            if precsion > current_purity
-                current_purity = precsion;
-            end                       
+            if len > current_max_num_samples
+                current_max_num_samples = len;
+            end                    
         end 
-        total_purity = total_purity + current_purity;
+        max_num_samples = max_num_samples + current_max_num_samples;
     end
-    purity = total_purity / num_cluster;
+    purity = max_num_samples / total_samples;
     
     % ARI
     data = zeros(num_class, num_cluster);
@@ -153,4 +156,3 @@ function [nmi, purity, fmeasure, ri, ari] = calculate_results(num_class_labels, 
     ri = (a + d) / total; 
     ari = (a - b0 * c0 /total) / ((b0 + c0) / 2 - b0 * c0 / total); 
 end
-
