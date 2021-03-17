@@ -73,7 +73,7 @@ function [nmi, purity, fmeasure, ri, ari] = calculate_results(num_class_labels, 
     for i =  1 : num_cluster       
         fm = 0;
         current_purity = 0;
-        current_cluster = cluster_data(j);            
+        current_cluster = cluster_data(i);
         num = size(current_cluster{1}, 2);
         for j = 1 : num_class          
             len = length(find(current_cluster{1}(1, :) == j));
